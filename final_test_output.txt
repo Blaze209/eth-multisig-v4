@@ -1,0 +1,442 @@
+
+
+  Cross-Wallet Replay Vulnerability PoC
+Wallet A address: 0x3ecB95E882D93153219e5004e096DC5bc7BEb02E
+Wallet B address: 0x8b84D4AdfB2a097EE88654CA4aBFAD27Ce2daf9c
+Executing transaction on Wallet A...
+Transaction on Wallet A successful.
+Attempting to replay the same signature on Wallet B...
+VULNERABILITY CONFIRMED: Signature replayed successfully on Wallet B!
+    ✔ VULNERABILITY: Cross-Wallet Signature Replay
+
+  Batcher
+    Good transactions
+      ✔ Correctly sends to a single recipient
+      ✔ Correctly sends to multiple recipients with exact amount
+      ✔ Correctly sends with duplicate recipients
+    Failed transactions
+DEBUG: Starting test - Reverts if total sent out does not equal total received
+      ✔ Reverts if total sent out does not equal total received
+      ✔ Reverts when a recipient is a re-entrant contract
+      ✔ Reverts when a recipient fails (e.g., has no receive function)
+DEBUG: Starting test - Reverts with empty recipients list
+      ✔ Reverts with empty recipients list
+DEBUG: Starting test - Reverts with mismatched recipients and values arrays
+      ✔ Reverts with mismatched recipients and values arrays
+DEBUG: Starting test - Reverts for zero address recipient
+      ✔ Reverts for zero address recipient
+DEBUG: Starting test - Reverts when recipients length exceeds limit
+      ✔ Reverts when recipients length exceeds limit (55ms)
+    Only owner functions
+      ✔ Successfully transfers ownership
+      ✔ Fails to transfer ownership for non-owner
+DEBUG: Starting test - Successfully sets transfer gas limit
+      ✔ Successfully sets transfer gas limit
+DEBUG: Starting test - Fails to set transfer gas limit below minimum
+      ✔ Fails to set transfer gas limit below minimum
+    Batch ERC20 Token Transfers
+      ✔ Successfully transfers tokens to multiple recipients
+      ✔ Successfully transfers tokens with duplicate recipients
+      ✔ Fails when sender has insufficient token balance
+      ✔ Fails when sender has not approved enough tokens
+      ✔ Fails with empty recipients array for token transfers
+      ✔ Fails with mismatched recipients and amounts arrays for token transfers
+      ✔ Fails when recipients length exceeds batchTransferLimit
+    Additional Stress Tests and Edge Cases
+      ✔ Stress test with maximum allowed recipients for native transfers (46ms)
+      ✔ Handles complex reentry scenarios correctly
+      ✔ Correctly handles gas-heavy recipients with appropriate gas limits
+    Ownership and Administrative Functions
+      ✔ Successfully changes batch transfer limit
+      ✔ Fails to set batch transfer limit to zero
+      ✔ Fails when non-owner tries to change batch transfer limit
+      ✔ Successfully changes native batch transfer limit
+      ✔ Fails to set native batch transfer limit to zero
+      ✔ Fails when non-owner tries to change native batch transfer limit
+    Recovery Functions for Stuck Tokens
+      ✔ Successfully recovers stuck ERC20 tokens
+      ✔ Fails when non-owner tries to use recovery function
+
+  Forwarder
+    Core Functionality
+      ✔ Basic forwarding test
+      ✔ Flush on initialization
+      ✔ Should not init twice
+      ✔ should change autoFlush settings when called by parent
+      ✔ should fail to change autoFlush settings if caller is not parent
+    NFT Support
+      ERC721
+        ✔ Should receive with safeTransferFrom with auto flush
+        ✔ Should receive with safeTransferFrom with no auto flush
+        ✔ Should be able to flush ERC721 tokens when called by parent
+      ERC1155
+        ✔ should receive erc1155 tokens with autoflush on
+        ✔ should receive batch erc1155 tokens with autoflush on
+        ✔ should be able to flush erc1155 tokens when called by parent
+    ERC165
+DEBUG: supportsInterface(ERC165): true
+DEBUG: supportsInterface(IForwarder): false
+DEBUG: supportsInterface(IERC1155Receiver): true
+      ✔ should reflect actual supportsInterface implementation
+    Re-Entrancy
+      ✔ should fail with reentry set to true for onERC721Received function
+      ✔ should pass with reentry set to false for onERC721Received function
+      ✔ should fail with reentry set to true for onERC1155Received function
+      ✔ should pass with reentry set to false for onERC1155Received function
+      ✔ should fail with reentry set to true for onERC1155BatchReceived function
+      ✔ should pass with reentry set to false for onERC1155BatchReceived function
+    Additional NFT Support Tests
+      ERC721 Advanced Features
+        ✔ Should support ERC721 safeTransferFrom with data
+        ✔ Should fail if token contract does not support ERC721
+        ✔ Should be able to flush ERC721 tokens when forwarder has approval
+        ✔ Should fail to flush ERC721 tokens when forwarder is not owner or approved
+      ERC1155 Advanced Features
+        ✔ Should handle multiple ERC1155 token types
+        ✔ Should batch flush ERC1155 tokens back to parent
+        ✔ Should fail to flush ERC1155 tokens when caller is not parent
+    Edge Cases and Error Conditions
+      ✔ Should not allow double initialization
+      ✔ Should handle failed external calls gracefully
+      ✔ Should change autoFlush721 when calling setAutoFlush721
+      ✔ Should fail to toggle autoFlush721 if caller is not parent
+      ✔ Should change autoFlush1155 when calling setAutoFlush1155
+      ✔ Should fail to toggle autoFlush1155 if caller is not parent
+
+  ForwarderFactory
+    ✔ Should create a functional forwarder using the factory
+    ✔ Different salt should create at different addresses
+    ✔ Different parents should create at different addresses
+    ✔ Different factory creators should create at different addresses
+    ✔ Should fail to create two contracts with the same salt and parent
+    ✔ should create a forwarder with autoflush params true/true
+    ✔ should create a forwarder with autoflush params false/true
+    ✔ should create a forwarder with autoflush params true/false
+    ✔ should create a forwarder with autoflush params false/false
+
+  ForwarderFactoryV4
+    ✔ Should create a functional forwarder using the factory
+    ✔ Different salt should create forwarders at different addresses
+    ✔ Different parents should create forwarders at different addresses
+    ✔ Different fee addresses should create forwarders at different addresses
+    ✔ Should fail to create two contracts with the same inputs
+    ✔ should create a forwarder with autoflush params true/true
+    ✔ should create a forwarder with autoflush params false/true
+    ✔ should create a forwarder with autoflush params true/false
+    ✔ should create a forwarder with autoflush params false/false
+
+  ForwarderV4
+    Core Functionality
+      ✔ Basic forwarding test
+      ✔ Should forward with data passed
+      ✔ Should not init twice
+      ✔ Should not init if parent address is invalid
+      ✔ Should not init if fee address is invalid
+      ✔ should change autoFlush settings when called by an allowed address
+      ✔ should fail to change autoFlush settings if caller is not an allowed address
+      ✔ should batch flush ERC20 tokens when called by an allowed address
+    NFT Support
+      ✔ Should receive ERC721 with auto flush
+      ✔ Should receive ERC721 without auto flush
+      ✔ Should receive ERC1155 with auto flush
+      ✔ Should flush ERC721 when called by an allowed address
+      ✔ Should flush ERC1155 when called by an allowed address
+
+  Wallet Operations Gas Usage
+    ✔ WalletSimple deployment [ @skip-on-coverage ]
+    ✔ WalletSimple send [ @skip-on-coverage ]
+    ✔ WalletSimple send batch [ @skip-on-coverage ] (40ms)
+
+  WalletFactory
+    ✔ Should create a functional wallet using the factory
+    ✔ Different salt should create at different addresses
+    ✔ Different signers should create at different addresses
+    ✔ Should fail to create two contracts with the same inputs
+
+  RecoveryWalletFactory
+    ✔ Should create a recovery wallet using factory and emit WalletCreated
+
+  WalletSimple Contracts
+    WalletSimple
+      Wallet creation
+        ✔ 2 of 3 multisig wallet
+        ✔ Reverts when creating with 0 address signer
+      Deposits
+        ✔ Should emit event on deposit
+        ✔ Should emit event with data on deposit
+      Transaction sending using sendMultiSig
+        ✔ Send out 50 ether with sendMultiSig
+        ✔ Should fail to reuse a sequence ID
+        ✔ Should fail if the signature is invalid
+      Batch Transaction sending using sendMultiSigBatch
+        ✔ Should send batch transaction to multiple recipients
+        ✔ Should fail batch transaction with mismatched arrays
+      ERC20 token transfers
+        ✔ Should transfer ERC20 tokens using sendMultiSigToken
+      Safe mode
+        ✔ Should start with safe mode disabled
+        ✔ Should enable safe mode
+      NFT Support
+        ERC721
+          ✔ Should receive ERC721 via safeMint
+        ERC1155
+          ✔ Should receive ERC1155 tokens
+      ERC165 Interface Support
+        ✔ Should support ERC165 interface detection
+      Re-Entrancy
+        ✔ should fail with reentry set to true for sendMultiSig
+        ✔ should pass with reentry set to false for sendMultiSig
+        ✔ should fail with reentry set to true for sendMultiSigBatch
+        ✔ should pass with reentry set to false for sendMultiSigBatch
+        ✔ should fail with reentry set to true for sendMultiSigToken
+        ✔ should pass with reentry set to false for sendMultiSigToken
+      RecoveryWallet
+        ✔ Should successfully send funds via the recovery signer
+    RskWalletSimple
+      Wallet creation
+        ✔ 2 of 3 multisig wallet
+        ✔ Reverts when creating with 0 address signer
+      Deposits
+        ✔ Should emit event on deposit
+        ✔ Should emit event with data on deposit
+      Transaction sending using sendMultiSig
+        ✔ Send out 50 ether with sendMultiSig
+        ✔ Should fail to reuse a sequence ID
+        ✔ Should fail if the signature is invalid
+      Batch Transaction sending using sendMultiSigBatch
+        ✔ Should send batch transaction to multiple recipients
+        ✔ Should fail batch transaction with mismatched arrays
+      ERC20 token transfers
+        ✔ Should transfer ERC20 tokens using sendMultiSigToken
+      Safe mode
+        ✔ Should start with safe mode disabled
+        ✔ Should enable safe mode
+      NFT Support
+        ERC721
+          ✔ Should receive ERC721 via safeMint
+        ERC1155
+          ✔ Should receive ERC1155 tokens
+      ERC165 Interface Support
+        ✔ Should support ERC165 interface detection
+      Re-Entrancy
+        ✔ should fail with reentry set to true for sendMultiSig
+        ✔ should pass with reentry set to false for sendMultiSig
+        ✔ should fail with reentry set to true for sendMultiSigBatch
+        ✔ should pass with reentry set to false for sendMultiSigBatch
+        ✔ should fail with reentry set to true for sendMultiSigToken
+        ✔ should pass with reentry set to false for sendMultiSigToken
+      RecoveryWallet
+        ✔ Should successfully send funds via the recovery signer
+    EtcWalletSimple
+      Wallet creation
+        ✔ 2 of 3 multisig wallet
+        ✔ Reverts when creating with 0 address signer
+      Deposits
+        ✔ Should emit event on deposit
+        ✔ Should emit event with data on deposit
+      Transaction sending using sendMultiSig
+        ✔ Send out 50 ether with sendMultiSig
+        ✔ Should fail to reuse a sequence ID
+        ✔ Should fail if the signature is invalid
+      Batch Transaction sending using sendMultiSigBatch
+        ✔ Should send batch transaction to multiple recipients
+        ✔ Should fail batch transaction with mismatched arrays
+      ERC20 token transfers
+        ✔ Should transfer ERC20 tokens using sendMultiSigToken
+      Safe mode
+        ✔ Should start with safe mode disabled
+        ✔ Should enable safe mode
+      NFT Support
+        ERC721
+          ✔ Should receive ERC721 via safeMint
+        ERC1155
+          ✔ Should receive ERC1155 tokens
+      ERC165 Interface Support
+        ✔ Should support ERC165 interface detection
+      Re-Entrancy
+        ✔ should fail with reentry set to true for sendMultiSig
+        ✔ should pass with reentry set to false for sendMultiSig
+        ✔ should fail with reentry set to true for sendMultiSigBatch
+        ✔ should pass with reentry set to false for sendMultiSigBatch
+        ✔ should fail with reentry set to true for sendMultiSigToken
+        ✔ should pass with reentry set to false for sendMultiSigToken
+      RecoveryWallet
+        ✔ Should successfully send funds via the recovery signer
+    CeloWalletSimple
+      Wallet creation
+        ✔ 2 of 3 multisig wallet
+        ✔ Reverts when creating with 0 address signer
+      Deposits
+        ✔ Should emit event on deposit
+        ✔ Should emit event with data on deposit
+      Transaction sending using sendMultiSig
+        ✔ Send out 50 ether with sendMultiSig
+        ✔ Should fail to reuse a sequence ID
+        ✔ Should fail if the signature is invalid
+      Batch Transaction sending using sendMultiSigBatch
+        ✔ Should send batch transaction to multiple recipients
+        ✔ Should fail batch transaction with mismatched arrays
+      ERC20 token transfers
+        ✔ Should transfer ERC20 tokens using sendMultiSigToken
+      Safe mode
+        ✔ Should start with safe mode disabled
+        ✔ Should enable safe mode
+      NFT Support
+        ERC721
+          ✔ Should receive ERC721 via safeMint
+        ERC1155
+          ✔ Should receive ERC1155 tokens
+      ERC165 Interface Support
+        ✔ Should support ERC165 interface detection
+      Re-Entrancy
+        ✔ should fail with reentry set to true for sendMultiSig
+        ✔ should pass with reentry set to false for sendMultiSig
+        ✔ should fail with reentry set to true for sendMultiSigBatch
+        ✔ should pass with reentry set to false for sendMultiSigBatch
+        ✔ should fail with reentry set to true for sendMultiSigToken
+        ✔ should pass with reentry set to false for sendMultiSigToken
+      RecoveryWallet
+        ✔ Should successfully send funds via the recovery signer
+    PolygonWalletSimple
+      Wallet creation
+        ✔ 2 of 3 multisig wallet
+        ✔ Reverts when creating with 0 address signer
+      Deposits
+        ✔ Should emit event on deposit
+        ✔ Should emit event with data on deposit
+      Transaction sending using sendMultiSig
+        ✔ Send out 50 ether with sendMultiSig
+        ✔ Should fail to reuse a sequence ID
+        ✔ Should fail if the signature is invalid
+      Batch Transaction sending using sendMultiSigBatch
+        ✔ Should send batch transaction to multiple recipients
+        ✔ Should fail batch transaction with mismatched arrays
+      ERC20 token transfers
+        ✔ Should transfer ERC20 tokens using sendMultiSigToken
+      Safe mode
+        ✔ Should start with safe mode disabled
+        ✔ Should enable safe mode
+      NFT Support
+        ERC721
+          ✔ Should receive ERC721 via safeMint
+        ERC1155
+          ✔ Should receive ERC1155 tokens
+      ERC165 Interface Support
+        ✔ Should support ERC165 interface detection
+      Re-Entrancy
+        ✔ should fail with reentry set to true for sendMultiSig
+        ✔ should pass with reentry set to false for sendMultiSig
+        ✔ should fail with reentry set to true for sendMultiSigBatch
+        ✔ should pass with reentry set to false for sendMultiSigBatch
+        ✔ should fail with reentry set to true for sendMultiSigToken
+        ✔ should pass with reentry set to false for sendMultiSigToken
+      RecoveryWallet
+        ✔ Should successfully send funds via the recovery signer
+    ArbethWalletSimple
+      Wallet creation
+        ✔ 2 of 3 multisig wallet (42ms)
+        ✔ Reverts when creating with 0 address signer
+      Deposits
+        ✔ Should emit event on deposit
+        ✔ Should emit event with data on deposit
+      Transaction sending using sendMultiSig
+        ✔ Send out 50 ether with sendMultiSig
+        ✔ Should fail to reuse a sequence ID
+        ✔ Should fail if the signature is invalid
+      Batch Transaction sending using sendMultiSigBatch
+        ✔ Should send batch transaction to multiple recipients
+        ✔ Should fail batch transaction with mismatched arrays
+      ERC20 token transfers
+        ✔ Should transfer ERC20 tokens using sendMultiSigToken
+      Safe mode
+        ✔ Should start with safe mode disabled
+        ✔ Should enable safe mode
+      NFT Support
+        ERC721
+          ✔ Should receive ERC721 via safeMint
+        ERC1155
+          ✔ Should receive ERC1155 tokens
+      ERC165 Interface Support
+        ✔ Should support ERC165 interface detection
+      Re-Entrancy
+        ✔ should fail with reentry set to true for sendMultiSig
+        ✔ should pass with reentry set to false for sendMultiSig
+        ✔ should fail with reentry set to true for sendMultiSigBatch
+        ✔ should pass with reentry set to false for sendMultiSigBatch
+        ✔ should fail with reentry set to true for sendMultiSigToken
+        ✔ should pass with reentry set to false for sendMultiSigToken
+      RecoveryWallet
+        ✔ Should successfully send funds via the recovery signer
+    OpethWalletSimple
+      Wallet creation
+        ✔ 2 of 3 multisig wallet
+        ✔ Reverts when creating with 0 address signer
+      Deposits
+        ✔ Should emit event on deposit
+        ✔ Should emit event with data on deposit
+      Transaction sending using sendMultiSig
+        ✔ Send out 50 ether with sendMultiSig
+        ✔ Should fail to reuse a sequence ID
+        ✔ Should fail if the signature is invalid
+      Batch Transaction sending using sendMultiSigBatch
+        ✔ Should send batch transaction to multiple recipients
+        ✔ Should fail batch transaction with mismatched arrays
+      ERC20 token transfers
+        ✔ Should transfer ERC20 tokens using sendMultiSigToken
+      Safe mode
+        ✔ Should start with safe mode disabled
+        ✔ Should enable safe mode
+      NFT Support
+        ERC721
+          ✔ Should receive ERC721 via safeMint
+        ERC1155
+          ✔ Should receive ERC1155 tokens
+      ERC165 Interface Support
+        ✔ Should support ERC165 interface detection
+      Re-Entrancy
+        ✔ should fail with reentry set to true for sendMultiSig
+        ✔ should pass with reentry set to false for sendMultiSig
+        ✔ should fail with reentry set to true for sendMultiSigBatch
+        ✔ should pass with reentry set to false for sendMultiSigBatch
+        ✔ should fail with reentry set to true for sendMultiSigToken
+        ✔ should pass with reentry set to false for sendMultiSigToken
+      RecoveryWallet
+        ✔ Should successfully send funds via the recovery signer
+
+  Recover address from signature
+    ✔ Matches util.ecsign signer via Transacted event (10 iterations) (79ms)
+
+  Sequence ID anti-replay protection
+    ✔ Sequence ID should increment after successful transaction
+    ✔ Should reject transaction with used sequence ID
+
+  customContractVerifier
+    ✔ should verify a contract successfully on the first attempt (15014ms)
+    ✔ should succeed on the fallback check if the initial status check fails (15011ms)
+    ✔ should throw an error if both the initial attempt and fallback check fail (15018ms)
+    ✔ should handle the "Already Verified" case gracefully during submission
+
+  deployUtils (using Hardhat)
+    ✔ loadOutput returns empty if file does not exist
+    ✔ loadOutput reads JSON from file correctly
+    ✔ saveOutput writes JSON file with correct structure
+    ✔ saveOutput overwrites file if already exists
+    ✔ deployIfNeededAtNonce deploys contract if nonce matches
+    ✔ skips deployment if nonce is higher
+    waitAndVerify
+      ✔ should throw error if HRE is not defined
+      ✔ should successfully complete verification when standard verification succeeds
+      ✔ should handle already verified contracts gracefully
+      ✔ should wait for block confirmations before verification
+      ✔ should pass constructor arguments to verification
+      ✔ should attempt verify:sourcify for Hedera mainnet (chainId 295)
+      ✔ should attempt verify:sourcify for Hedera testnet (chainId 296)
+      ✔ should use standard verification for Ethereum mainnet (chainId 1)
+
+  Batcher.changeTransferGasLimit
+    ✔ owner can update transferGasLimit and event is emitted
+    ✔ reverts when setting transferGasLimit below 2300
+    ✔ non-owner cannot update transferGasLimit
+
+
+  281 passing (53s)
