@@ -488,6 +488,28 @@ describe('Batcher', () => {
           .batchTransferFrom(fixedSupplyToken.getAddress(), recipients, amounts)
       ).to.be.revertedWithCustomError(batcher, 'TooManyRecipients');
     });
+
+    it('Fails when token address is zero address', async () => {
+      const recipients = [recipient1.address];
+      const amounts = [100n];
+
+      await expect(
+        batcher
+          .connect(sender)
+          .batchTransferFrom(ethers.ZeroAddress, recipients, amounts)
+      ).to.be.revertedWith('Invalid token address');
+    });
+
+    it('Fails when recipient is zero address', async () => {
+      const recipients = [ethers.ZeroAddress];
+      const amounts = [100n];
+
+      await expect(
+        batcher
+          .connect(sender)
+          .batchTransferFrom(fixedSupplyToken.getAddress(), recipients, amounts)
+      ).to.be.revertedWith('Invalid recipient address');
+    });
   });
 
   describe('Additional Stress Tests and Edge Cases', () => {

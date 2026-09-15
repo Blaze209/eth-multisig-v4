@@ -103,12 +103,14 @@ contract Batcher is Ownable2Step, ReentrancyGuard {
     address[] calldata recipients,
     uint256[] calldata amounts
   ) external nonReentrant {
+    require(token != address(0), 'Invalid token address');
     if (recipients.length == 0) revert EmptyRecipientsList();
     if (recipients.length != amounts.length) revert UnequalRecipientsAndValues();
     if (recipients.length > batchTransferLimit) revert TooManyRecipients(recipients.length, batchTransferLimit);
 
     IERC20 safeToken = IERC20(token);
     for (uint256 i = 0; i < recipients.length; i++) {
+      require(recipients[i] != address(0), 'Invalid recipient address');
       safeToken.safeTransferFrom(msg.sender, recipients[i], amounts[i]);
     }
   }
@@ -124,7 +126,7 @@ contract Batcher is Ownable2Step, ReentrancyGuard {
     uint256 value,
     bytes calldata data
   ) external onlyOwner returns (bytes memory) {
-    require(to != address(0), "Recovery to zero address not allowed");
+    require(to != address(0), 'Recovery to zero address not allowed');
     emit RecoveryInitiated(to, value, data);
     (bool success, bytes memory returnData) = to.call{ value: value }(data);
     require(success, 'Recover failed');
