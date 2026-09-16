@@ -141,6 +141,12 @@ describe('WalletFactory', function () {
     expect(await wallet1.getAddress()).to.not.equal(await wallet2.getAddress());
   });
 
+  it('Should revert when deployed with zero address implementation', async function () {
+    await expect(WalletFactory.deploy(ethers.ZeroAddress)).to.be.revertedWith(
+      'Invalid implementation address'
+    );
+  });
+
   it('Should fail to create two contracts with the same inputs', async function () {
     const { factory } = await createWalletFactory();
     const signers = [deployer.address, signer1.address, signer2.address]; // Must have 3 signers
@@ -153,6 +159,27 @@ describe('WalletFactory', function () {
     const saltBytes = ethers.encodeBytes32String(salt);
     await expect(factory.connect(user1).createWallet(signers, saltBytes)).to.be
       .reverted;
+  });
+});
+
+describe('ForwarderFactory and ForwarderFactoryV4', function () {
+  let ForwarderFactory, ForwarderFactoryV4;
+
+  before(async () => {
+    ForwarderFactory = await ethers.getContractFactory('ForwarderFactory');
+    ForwarderFactoryV4 = await ethers.getContractFactory('ForwarderFactoryV4');
+  });
+
+  it('ForwarderFactory should revert when deployed with zero address implementation', async function () {
+    await expect(
+      ForwarderFactory.deploy(ethers.ZeroAddress)
+    ).to.be.revertedWith('Invalid implementation address');
+  });
+
+  it('ForwarderFactoryV4 should revert when deployed with zero address implementation', async function () {
+    await expect(
+      ForwarderFactoryV4.deploy(ethers.ZeroAddress)
+    ).to.be.revertedWith('Invalid implementation address');
   });
 });
 
