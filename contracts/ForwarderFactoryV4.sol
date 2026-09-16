@@ -31,6 +31,10 @@ contract ForwarderFactoryV4 is CloneFactory {
    * @param _implementationAddress Address of the current forwarder implementation
    */
   constructor(address _implementationAddress) {
+    require(
+      _implementationAddress != address(0),
+      'Invalid implementation address'
+    );
     implementationAddress = _implementationAddress;
   }
 
