@@ -31,8 +31,10 @@ interface IForwarderV4 is IERC165 {
    * @param tokenContractAddress the address of the ERC721 NFT contract
    * @param tokenId The token id of the nft
    */
-  function flushERC721Token(address tokenContractAddress, uint256 tokenId)
-    external;
+  function flushERC721Token(
+    address tokenContractAddress,
+    uint256 tokenId
+  ) external;
 
   /**
    * Execute a nft transfer from the forwarder to the parent address.
@@ -40,8 +42,10 @@ interface IForwarderV4 is IERC165 {
    * @param tokenContractAddress the address of the ERC1155 NFT contract
    * @param tokenId The token id of the nft
    */
-  function flushERC1155Tokens(address tokenContractAddress, uint256 tokenId)
-    external;
+  function flushERC1155Tokens(
+    address tokenContractAddress,
+    uint256 tokenId
+  ) external;
 
   /**
    * Execute a batch nft transfer from the forwarder to the parent address.
@@ -59,6 +63,7 @@ interface IForwarderV4 is IERC165 {
    *
    * @param tokenContractAddresses the addresses of the ERC20 token contracts
    */
-  function batchFlushERC20Tokens(address[] calldata tokenContractAddresses)
-    external;
+  function batchFlushERC20Tokens(
+    address[] calldata tokenContractAddresses
+  ) external;
 }

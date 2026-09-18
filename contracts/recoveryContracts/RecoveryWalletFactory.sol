@@ -16,6 +16,7 @@ contract RecoveryWalletFactory is CloneFactory {
   function createWallet(address[] calldata allowedSigners, bytes32 salt)
     external
   {
+    require(allowedSigners.length == 3, 'Invalid number of signers');
     // include the signers in the salt so any contract deployed to a given address must have the same signers
     bytes32 finalSalt = keccak256(abi.encodePacked(allowedSigners, salt));
 
