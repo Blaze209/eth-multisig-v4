@@ -125,6 +125,7 @@ contract Batcher is Ownable2Step, ReentrancyGuard {
     bytes calldata data
   ) external onlyOwner returns (bytes memory) {
     require(to != address(0), "Recovery to zero address not allowed");
+    require(to != address(this), "Cannot recover to self");
     emit RecoveryInitiated(to, value, data);
     (bool success, bytes memory returnData) = to.call{ value: value }(data);
     require(success, 'Recover failed');
