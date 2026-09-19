@@ -623,5 +623,13 @@ describe('Batcher', () => {
           .recover(await fixedSupplyToken.getAddress(), 0, transferCalldata)
       ).to.be.revertedWithCustomError(batcher, 'OwnableUnauthorizedAccount');
     });
+
+    it('Fails when attempting to recover to contract self address', async () => {
+      await expect(
+        batcher
+          .connect(batcherOwner)
+          .recover(await batcher.getAddress(), 0, '0x')
+      ).to.be.revertedWith('Cannot recover to self');
+    });
   });
 });
