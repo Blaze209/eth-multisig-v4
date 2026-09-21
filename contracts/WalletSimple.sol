@@ -381,10 +381,10 @@ contract WalletSimple is IERC721Receiver, ERC1155Holder {
    * @param forwarderAddress the address of the forwarder to toggle.
    * @param autoFlush whether to autoflush erc721 tokens
    */
-  function setAutoFlush721(address forwarderAddress, bool autoFlush)
-    external
-    onlySigner
-  {
+  function setAutoFlush721(
+    address forwarderAddress,
+    bool autoFlush
+  ) external onlySigner {
     IForwarder forwarder = IForwarder(forwarderAddress);
     forwarder.setAutoFlush721(autoFlush);
   }
@@ -395,10 +395,10 @@ contract WalletSimple is IERC721Receiver, ERC1155Holder {
    * @param forwarderAddress the address of the forwarder to toggle.
    * @param autoFlush whether to autoflush erc1155 tokens
    */
-  function setAutoFlush1155(address forwarderAddress, bool autoFlush)
-    external
-    onlySigner
-  {
+  function setAutoFlush1155(
+    address forwarderAddress,
+    bool autoFlush
+  ) external onlySigner {
     IForwarder forwarder = IForwarder(forwarderAddress);
     forwarder.setAutoFlush1155(autoFlush);
   }
@@ -522,7 +522,7 @@ contract WalletSimple is IERC721Receiver, ERC1155Holder {
     require(
       uint256(s) <=
         0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0,
-      "ECDSA: invalid signature 's' value"
+      'ECDSA: invalid signature s value'
     );
 
     // note that this returns 0 if the signature is invalid

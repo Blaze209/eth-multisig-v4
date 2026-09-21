@@ -78,6 +78,14 @@ describe('Forwarder', function () {
         .be.reverted;
     });
 
+    it('Should revert when initializing with zero-address parent', async function () {
+      const uninitForwarder = await Forwarder.connect(owner).deploy([]);
+      await uninitForwarder.waitForDeployment();
+      await expect(
+        uninitForwarder.connect(owner).init(ethers.ZeroAddress, true, true)
+      ).to.be.revertedWith('Invalid parent address');
+    });
+
     it('should change autoFlush settings when called by parent', async () => {
       const forwarder = await createForwarder(owner, parent);
       await forwarder.connect(parent).setAutoFlush721(false);

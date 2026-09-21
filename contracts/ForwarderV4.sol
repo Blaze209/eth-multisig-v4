@@ -103,24 +103,18 @@ contract ForwarderV4 is IERC721Receiver, ERC1155Holder, IForwarderV4 {
   /**
    * @inheritdoc IForwarderV4
    */
-  function setAutoFlush721(bool autoFlush)
-    external
-    virtual
-    override
-    onlyAllowedAddress
-  {
+  function setAutoFlush721(
+    bool autoFlush
+  ) external virtual override onlyAllowedAddress {
     autoFlush721 = autoFlush;
   }
 
   /**
    * @inheritdoc IForwarderV4
    */
-  function setAutoFlush1155(bool autoFlush)
-    external
-    virtual
-    override
-    onlyAllowedAddress
-  {
+  function setAutoFlush1155(
+    bool autoFlush
+  ) external virtual override onlyAllowedAddress {
     autoFlush1155 = autoFlush;
   }
 
@@ -227,12 +221,9 @@ contract ForwarderV4 is IERC721Receiver, ERC1155Holder, IForwarderV4 {
   /**
    * @inheritdoc IForwarderV4
    */
-  function flushTokens(address tokenContractAddress)
-    external
-    virtual
-    override
-    onlyAllowedAddress
-  {
+  function flushTokens(
+    address tokenContractAddress
+  ) external virtual override onlyAllowedAddress {
     ERC20Interface instance = ERC20Interface(tokenContractAddress);
     address forwarderAddress = address(this);
     uint256 forwarderBalance = instance.balanceOf(forwarderAddress);
@@ -250,12 +241,10 @@ contract ForwarderV4 is IERC721Receiver, ERC1155Holder, IForwarderV4 {
   /**
    * @inheritdoc IForwarderV4
    */
-  function flushERC721Token(address tokenContractAddress, uint256 tokenId)
-    external
-    virtual
-    override
-    onlyAllowedAddress
-  {
+  function flushERC721Token(
+    address tokenContractAddress,
+    uint256 tokenId
+  ) external virtual override onlyAllowedAddress {
     IERC721 instance = IERC721(tokenContractAddress);
     require(
       instance.supportsInterface(type(IERC721).interfaceId),
@@ -269,12 +258,10 @@ contract ForwarderV4 is IERC721Receiver, ERC1155Holder, IForwarderV4 {
   /**
    * @inheritdoc IForwarderV4
    */
-  function flushERC1155Tokens(address tokenContractAddress, uint256 tokenId)
-    external
-    virtual
-    override
-    onlyAllowedAddress
-  {
+  function flushERC1155Tokens(
+    address tokenContractAddress,
+    uint256 tokenId
+  ) external virtual override onlyAllowedAddress {
     IERC1155 instance = IERC1155(tokenContractAddress);
     require(
       instance.supportsInterface(type(IERC1155).interfaceId),
@@ -325,12 +312,9 @@ contract ForwarderV4 is IERC721Receiver, ERC1155Holder, IForwarderV4 {
   /**
    * @inheritdoc IForwarderV4
    */
-  function batchFlushERC20Tokens(address[] calldata tokenContractAddresses)
-    external
-    virtual
-    override
-    onlyAllowedAddress
-  {
+  function batchFlushERC20Tokens(
+    address[] calldata tokenContractAddresses
+  ) external virtual override onlyAllowedAddress {
     address forwarderAddress = address(this);
     uint256 length = tokenContractAddresses.length;
     for (uint256 i; i < length; i++) {
@@ -366,13 +350,9 @@ contract ForwarderV4 is IERC721Receiver, ERC1155Holder, IForwarderV4 {
   /**
    * @inheritdoc IERC165
    */
-  function supportsInterface(bytes4 interfaceId)
-    public
-    view
-    virtual
-    override(ERC1155Holder, IERC165)
-    returns (bool)
-  {
+  function supportsInterface(
+    bytes4 interfaceId
+  ) public view virtual override(ERC1155Holder, IERC165) returns (bool) {
     return
       interfaceId == type(IForwarderV4).interfaceId ||
       super.supportsInterface(interfaceId);

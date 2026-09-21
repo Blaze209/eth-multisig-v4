@@ -20,6 +20,7 @@ contract RecoveryWalletSimple is IERC721Receiver, ERC1155Holder {
   bool public initialized = false; // True if the contract has been initialized
 
   function init(address _signer) external onlyUninitialized {
+    require(_signer != address(0x0), 'Invalid signer address');
     signer = _signer;
     initialized = true;
   }

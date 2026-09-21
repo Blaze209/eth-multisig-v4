@@ -26,10 +26,10 @@ pragma solidity 0.8.20;
 //solhint-disable no-inline-assembly
 
 contract CloneFactory {
-  function createClone(address target, bytes32 salt)
-    internal
-    returns (address payable result)
-  {
+  function createClone(
+    address target,
+    bytes32 salt
+  ) internal returns (address payable result) {
     bytes20 targetBytes = bytes20(target);
     assembly {
       // load the next free memory slot as a place to store the clone contract data
@@ -62,11 +62,10 @@ contract CloneFactory {
     }
   }
 
-  function isClone(address target, address query)
-    internal
-    view
-    returns (bool result)
-  {
+  function isClone(
+    address target,
+    address query
+  ) internal view returns (bool result) {
     bytes20 targetBytes = bytes20(target);
     assembly {
       // load the next free memory slot as a place to store the comparison clone

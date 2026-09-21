@@ -788,6 +788,14 @@ describe('WalletSimple Contracts', function () {
         });
 
         describe('RecoveryWallet', function () {
+          it('Reverts when initializing RecoveryWallet with zero address signer', async function () {
+            const recoveryImpl = await RecoveryWalletSimple.deploy();
+            await recoveryImpl.waitForDeployment();
+            await expect(
+              recoveryImpl.init(ethers.ZeroAddress)
+            ).to.be.revertedWith('Invalid signer address');
+          });
+
           it('Should successfully send funds via the recovery signer', async function () {
             // Deploy implementation and factory
             const recoveryImpl = await RecoveryWalletSimple.deploy();
