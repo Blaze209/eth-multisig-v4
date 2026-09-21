@@ -28,6 +28,7 @@ contract Forwarder is IERC721Receiver, ERC1155Holder, IForwarder {
     bool _autoFlush721,
     bool _autoFlush1155
   ) external onlyUninitialized {
+    require(_parentAddress != address(0x0), 'Invalid parent address');
     parentAddress = _parentAddress;
     uint256 value = address(this).balance;
 
@@ -82,24 +83,18 @@ contract Forwarder is IERC721Receiver, ERC1155Holder, IForwarder {
   /**
    * @inheritdoc IForwarder
    */
-  function setAutoFlush721(bool autoFlush)
-    external
-    virtual
-    override
-    onlyParent
-  {
+  function setAutoFlush721(
+    bool autoFlush
+  ) external virtual override onlyParent {
     autoFlush721 = autoFlush;
   }
 
   /**
    * @inheritdoc IForwarder
    */
-  function setAutoFlush1155(bool autoFlush)
-    external
-    virtual
-    override
-    onlyParent
-  {
+  function setAutoFlush1155(
+    bool autoFlush
+  ) external virtual override onlyParent {
     autoFlush1155 = autoFlush;
   }
 
@@ -199,12 +194,9 @@ contract Forwarder is IERC721Receiver, ERC1155Holder, IForwarder {
   /**
    * @inheritdoc IForwarder
    */
-  function flushTokens(address tokenContractAddress)
-    external
-    virtual
-    override
-    onlyParent
-  {
+  function flushTokens(
+    address tokenContractAddress
+  ) external virtual override onlyParent {
     ERC20Interface instance = ERC20Interface(tokenContractAddress);
     address forwarderAddress = address(this);
     uint256 forwarderBalance = instance.balanceOf(forwarderAddress);
@@ -222,12 +214,10 @@ contract Forwarder is IERC721Receiver, ERC1155Holder, IForwarder {
   /**
    * @inheritdoc IForwarder
    */
-  function flushERC721Token(address tokenContractAddress, uint256 tokenId)
-    external
-    virtual
-    override
-    onlyParent
-  {
+  function flushERC721Token(
+    address tokenContractAddress,
+    uint256 tokenId
+  ) external virtual override onlyParent {
     IERC721 instance = IERC721(tokenContractAddress);
     require(
       instance.supportsInterface(type(IERC721).interfaceId),
@@ -241,12 +231,10 @@ contract Forwarder is IERC721Receiver, ERC1155Holder, IForwarder {
   /**
    * @inheritdoc IForwarder
    */
-  function flushERC1155Tokens(address tokenContractAddress, uint256 tokenId)
-    external
-    virtual
-    override
-    onlyParent
-  {
+  function flushERC1155Tokens(
+    address tokenContractAddress,
+    uint256 tokenId
+  ) external virtual override onlyParent {
     IERC1155 instance = IERC1155(tokenContractAddress);
     require(
       instance.supportsInterface(type(IERC1155).interfaceId),
@@ -311,13 +299,9 @@ contract Forwarder is IERC721Receiver, ERC1155Holder, IForwarder {
   /**
    * @inheritdoc IERC165
    */
-  function supportsInterface(bytes4 interfaceId)
-    public
-    view
-    virtual
-    override(ERC1155Holder, IERC165)
-    returns (bool)
-  {
+  function supportsInterface(
+    bytes4 interfaceId
+  ) public view virtual override(ERC1155Holder, IERC165) returns (bool) {
     return
       interfaceId == type(IForwarder).interfaceId ||
       super.supportsInterface(interfaceId);

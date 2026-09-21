@@ -50,7 +50,11 @@ contract Batcher is Ownable2Step, ReentrancyGuard {
   /// @param _batchTransferLimit Maximum number of ERC20 transfers allowed in a batch
   /// @param _nativeBatchTransferLimit Maximum number of native coin transfers allowed in a batch
   /// @dev Sets initial values for transfer limits and initializes the reentrancy guard
-  constructor(uint256 _transferGasLimit, uint256 _batchTransferLimit, uint256 _nativeBatchTransferLimit) Ownable(msg.sender) {
+  constructor(
+    uint256 _transferGasLimit,
+    uint256 _batchTransferLimit,
+    uint256 _nativeBatchTransferLimit
+  ) Ownable(msg.sender) {
     transferGasLimit = _transferGasLimit;
     batchTransferLimit = _batchTransferLimit;
     nativeBatchTransferLimit = _nativeBatchTransferLimit;
@@ -64,14 +68,14 @@ contract Batcher is Ownable2Step, ReentrancyGuard {
   /// @param values The list of values to send to recipients.
   /// @dev Total value sent must match msg.value exactly
   /// @dev Reverts if any transfer fails or if arrays are mismatched
-  function batch(address[] calldata recipients, uint256[] calldata values)
-    external
-    payable
-    nonReentrant
-  {
+  function batch(
+    address[] calldata recipients,
+    uint256[] calldata values
+  ) external payable nonReentrant {
     if (recipients.length == 0) revert EmptyRecipientsList();
     if (recipients.length != values.length) revert UnequalRecipientsAndValues();
-    if (recipients.length > nativeBatchTransferLimit) revert TooManyRecipients(recipients.length, nativeBatchTransferLimit);
+    if (recipients.length > nativeBatchTransferLimit)
+      revert TooManyRecipients(recipients.length, nativeBatchTransferLimit);
 
     uint256 totalSent = 0;
 
@@ -104,8 +108,10 @@ contract Batcher is Ownable2Step, ReentrancyGuard {
     uint256[] calldata amounts
   ) external nonReentrant {
     if (recipients.length == 0) revert EmptyRecipientsList();
-    if (recipients.length != amounts.length) revert UnequalRecipientsAndValues();
-    if (recipients.length > batchTransferLimit) revert TooManyRecipients(recipients.length, batchTransferLimit);
+    if (recipients.length != amounts.length)
+      revert UnequalRecipientsAndValues();
+    if (recipients.length > batchTransferLimit)
+      revert TooManyRecipients(recipients.length, batchTransferLimit);
 
     IERC20 safeToken = IERC20(token);
     for (uint256 i = 0; i < recipients.length; i++) {
@@ -124,7 +130,7 @@ contract Batcher is Ownable2Step, ReentrancyGuard {
     uint256 value,
     bytes calldata data
   ) external onlyOwner returns (bytes memory) {
-    require(to != address(0), "Recovery to zero address not allowed");
+    require(to != address(0), 'Recovery to zero address not allowed');
     emit RecoveryInitiated(to, value, data);
     (bool success, bytes memory returnData) = to.call{ value: value }(data);
     require(success, 'Recover failed');
@@ -135,10 +141,9 @@ contract Batcher is Ownable2Step, ReentrancyGuard {
   /// @param newTransferGasLimit New gas limit value
   /// @dev Minimum value of 2300 required for basic ETH transfers
   /// @dev Only callable by contract owner
-  function changeTransferGasLimit(uint256 newTransferGasLimit)
-    external
-    onlyOwner
-  {
+  function changeTransferGasLimit(
+    uint256 newTransferGasLimit
+  ) external onlyOwner {
     require(newTransferGasLimit >= 2300, 'Transfer gas limit too low');
     emit TransferGasLimitChange(transferGasLimit, newTransferGasLimit);
     transferGasLimit = newTransferGasLimit;
@@ -148,10 +153,9 @@ contract Batcher is Ownable2Step, ReentrancyGuard {
   /// @param newBatchTransferLimit New maximum batch size
   /// @dev Must be greater than zero
   /// @dev Only callable by contract owner
-  function changeBatchTransferLimit(uint256 newBatchTransferLimit)
-    external
-    onlyOwner
-  {
+  function changeBatchTransferLimit(
+    uint256 newBatchTransferLimit
+  ) external onlyOwner {
     require(newBatchTransferLimit > 0, 'Batch transfer limit too low');
     emit BatchTransferLimitChange(batchTransferLimit, newBatchTransferLimit);
     batchTransferLimit = newBatchTransferLimit;
@@ -161,12 +165,17 @@ contract Batcher is Ownable2Step, ReentrancyGuard {
   /// @param newNativeBatchTransferLimit New maximum batch size for native coin transfers
   /// @dev Must be greater than zero
   /// @dev Only callable by contract owner
-  function changeNativeBatchTransferLimit(uint256 newNativeBatchTransferLimit)
-    external
-    onlyOwner
-  {
-    require(newNativeBatchTransferLimit > 0, 'Native batch transfer limit too low');
-    emit NativeBatchTransferLimitChange(nativeBatchTransferLimit, newNativeBatchTransferLimit);
+  function changeNativeBatchTransferLimit(
+    uint256 newNativeBatchTransferLimit
+  ) external onlyOwner {
+    require(
+      newNativeBatchTransferLimit > 0,
+      'Native batch transfer limit too low'
+    );
+    emit NativeBatchTransferLimitChange(
+      nativeBatchTransferLimit,
+      newNativeBatchTransferLimit
+    );
     nativeBatchTransferLimit = newNativeBatchTransferLimit;
   }
 }
