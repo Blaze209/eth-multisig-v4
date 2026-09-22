@@ -312,6 +312,25 @@ describe('WalletSimple Contracts', function () {
                 )
             ).to.be.revertedWith('Invalid signer');
           });
+
+          it('Should revert sendMultiSig when toAddress is zero address', async function () {
+            const amount = ethers.parseEther('1');
+            const expireTime = Math.floor(Date.now() / 1000) + 3600;
+            const sequenceId = Number(await wallet.getNextSequenceId());
+
+            await expect(
+              wallet
+                .connect(deployer)
+                .sendMultiSig(
+                  ethers.ZeroAddress,
+                  amount,
+                  '0x',
+                  expireTime,
+                  sequenceId,
+                  '0x'
+                )
+            ).to.be.revertedWith('Invalid toAddress');
+          });
         });
 
         // Batch Transaction sending using sendMultiSigBatch
@@ -452,6 +471,25 @@ describe('WalletSimple Contracts', function () {
               [wallet, user1],
               [-amount, amount]
             );
+          });
+
+          it('Should revert sendMultiSigToken when toAddress is zero address', async function () {
+            const amount = 10n;
+            const expireTime = Math.floor(Date.now() / 1000) + 3600;
+            const sequenceId = Number(await wallet.getNextSequenceId());
+
+            await expect(
+              wallet
+                .connect(deployer)
+                .sendMultiSigToken(
+                  ethers.ZeroAddress,
+                  amount,
+                  await token.getAddress(),
+                  expireTime,
+                  sequenceId,
+                  '0x'
+                )
+            ).to.be.revertedWith('Invalid toAddress');
           });
         });
 
