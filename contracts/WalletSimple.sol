@@ -178,6 +178,8 @@ contract WalletSimple is IERC721Receiver, ERC1155Holder {
     uint256 sequenceId,
     bytes calldata signature
   ) external onlySigner {
+    require(toAddress != address(0), 'Invalid toAddress');
+
     // Verify the other signer
     bytes32 operationHash = keccak256(
       abi.encode(getNetworkId(), toAddress, value, data, expireTime, sequenceId)
@@ -296,6 +298,8 @@ contract WalletSimple is IERC721Receiver, ERC1155Holder {
     uint256 sequenceId,
     bytes calldata signature
   ) external onlySigner {
+    require(toAddress != address(0), 'Invalid toAddress');
+
     // Verify the other signer
     bytes32 operationHash = keccak256(
       abi.encodePacked(
