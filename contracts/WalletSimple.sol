@@ -80,6 +80,8 @@ contract WalletSimple is IERC721Receiver, ERC1155Holder {
 
     for (uint8 i = 0; i < allowedSigners.length; i++) {
       require(allowedSigners[i] != address(0), 'Invalid signer');
+      // Ensure signers are unique to prevent reduced threshold or locked funds
+      require(!signers[allowedSigners[i]], 'Duplicate signer');
       signers[allowedSigners[i]] = true;
     }
 
