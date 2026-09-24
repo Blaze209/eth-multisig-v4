@@ -132,6 +132,22 @@ describe('WalletSimple Contracts', function () {
               walletImplementation.init([deployer.address, ethers.ZeroAddress])
             ).to.be.revertedWith('Invalid number of signers');
           });
+
+          it('Reverts when creating with duplicate signers', async function () {
+            const WalletSimpleImplementation = await ethers.getContractFactory(
+              walletContractName
+            );
+            const walletImplementation =
+              await WalletSimpleImplementation.deploy();
+            await walletImplementation.waitForDeployment();
+            await expect(
+              walletImplementation.init([
+                deployer.address,
+                deployer.address,
+                signer1.address
+              ])
+            ).to.be.revertedWith('Duplicate signer');
+          });
         });
 
         describe('Deposits', function () {
