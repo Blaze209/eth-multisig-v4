@@ -525,6 +525,14 @@ describe('Forwarder', function () {
       ).to.be.revertedWith('Already initialized');
     });
 
+    it('Should revert when initializing with zero address parent', async function () {
+      const forwarderContract = await Forwarder.connect(owner).deploy([]);
+      await forwarderContract.waitForDeployment();
+      await expect(
+        forwarderContract.connect(owner).init(ethers.ZeroAddress, true, true)
+      ).to.be.revertedWith('Invalid parent address');
+    });
+
     it('Should handle failed external calls gracefully', async function () {
       // Try to call a non-existent function
       const invalidCalldata = '0x12345678'; // Invalid function selector
