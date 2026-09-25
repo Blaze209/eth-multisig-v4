@@ -1,0 +1,4 @@
+## 2025-02-18 - Missing Zero Address Check Leads to Contract Re-Initialization and Hijacking
+**Vulnerability:** `Forwarder.sol` initialized `parentAddress` without verifying `_parentAddress != address(0x0)`. Because the `onlyUninitialized` modifier checks `parentAddress == address(0x0)`, setting `_parentAddress` to `address(0x0)` failed to mark the contract as initialized.
+**Learning:** Using a state variable (such as `parentAddress == address(0x0)`) as the single indicator for initialization without validating input parameter against the zero address allows a contract to remain permanently "uninitialized", enabling an attacker to re-initialize and claim ownership/parent privileges.
+**Prevention:** Always validate constructor/initializer address parameters against `address(0x0)`, or use a dedicated boolean `initialized` flag.
