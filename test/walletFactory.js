@@ -222,4 +222,28 @@ describe('RecoveryWalletFactory', function () {
       wallet.connect(signer2).sendFunds(deployer.address, amount, '0x')
     ).to.changeEtherBalances([wallet, deployer], [-amount, amount]);
   });
+
+  it('Should revert createWallet when allowedSigners length is less than 3', async function () {
+    const recoveryImpl = await RecoveryWalletSimple.deploy();
+    await recoveryImpl.waitForDeployment();
+    const factory = await RecoveryWalletFactory.deploy(
+      await recoveryImpl.getAddress()
+    );
+    await factory.waitForDeployment();
+
+    const salt = 'recovery-salt-short';
+    const saltBytes = ethers.encodeBytes32String(salt);
+
+    await expect(factory.createWallet([], saltBytes)).to.be.revertedWith(
+      'Invalid number of signers'
+    );
+
+    await expect(
+      factory.createWallet([deployer.address], saltBytes)
+    ).to.be.revertedWith('Invalid number of signers');
+
+    await expect(
+      factory.createWallet([deployer.address, signer1.address], saltBytes)
+    ).to.be.revertedWith('Invalid number of signers');
+  });
 });
