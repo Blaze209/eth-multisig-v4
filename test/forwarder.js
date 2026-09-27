@@ -72,6 +72,14 @@ describe('Forwarder', function () {
       ).to.changeEtherBalances([parent, forwarder], [amount, -amount]);
     });
 
+    it('Should revert if initialized with zero address parent', async function () {
+      const forwarderContract = await Forwarder.connect(owner).deploy([]);
+      await forwarderContract.waitForDeployment();
+      await expect(
+        forwarderContract.connect(owner).init(ethers.ZeroAddress, true, true)
+      ).to.be.revertedWith('Invalid parent address');
+    });
+
     it('Should not init twice', async function () {
       const forwarder = await createForwarder(owner, parent);
       await expect(forwarder.connect(owner).init(parent.address, true, true)).to

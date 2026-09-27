@@ -1,0 +1,4 @@
+## 2025-09-27 - Uninitialized Proxy State due to Missing Zero-Address Check
+**Vulnerability:** In upgradeable proxy / clone pattern initialization, when uninitialized state is checked using `parentAddress == address(0)`, initializing the contract with `address(0)` allows the call to succeed without mutating `parentAddress` away from `0x0`. As a result, `onlyUninitialized` continues to evaluate to true, allowing anyone to re-initialize the contract and take control of `parentAddress`.
+**Learning:** Checking initialization status using state variables that can legitimately equal the default value (such as `address(0)`) creates an initialization bypass if input validation is missing on that parameter.
+**Prevention:** Always validate that initial parameters (like addresses) are non-zero if they double as initialization indicators, or use an explicit `initialized` boolean flag.
