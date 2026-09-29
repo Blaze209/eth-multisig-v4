@@ -28,6 +28,7 @@ contract Forwarder is IERC721Receiver, ERC1155Holder, IForwarder {
     bool _autoFlush721,
     bool _autoFlush1155
   ) external onlyUninitialized {
+    require(_parentAddress != address(0x0), 'Invalid parent address');
     parentAddress = _parentAddress;
     uint256 value = address(this).balance;
 

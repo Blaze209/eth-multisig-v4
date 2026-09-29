@@ -519,6 +519,14 @@ describe('Forwarder', function () {
       forwarder = await createForwarder(owner, parent);
     });
 
+    it('Should revert if initialized with zero address as parent', async function () {
+      const forwarderContract = await Forwarder.connect(owner).deploy([]);
+      await forwarderContract.waitForDeployment();
+      await expect(
+        forwarderContract.init(ethers.ZeroAddress, true, true)
+      ).to.be.revertedWith('Invalid parent address');
+    });
+
     it('Should not allow double initialization', async function () {
       await expect(
         forwarder.connect(owner).init(parent.address, true, true)
