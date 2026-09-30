@@ -452,6 +452,35 @@ describe('Batcher', () => {
       ).to.be.reverted; // Just check that it reverts
     });
 
+    it('Fails when token address is zero address', async () => {
+      const recipients = [recipient1.address];
+      const amounts = [100n];
+
+      await expect(
+        batcher
+          .connect(sender)
+          .batchTransferFrom(ethers.ZeroAddress, recipients, amounts)
+      ).to.be.revertedWith('Invalid token address');
+    });
+
+    it('Fails when any recipient address is zero address', async () => {
+      const recipients = [recipient1.address, ethers.ZeroAddress];
+      const amounts = [100n, 100n];
+
+      await fixedSupplyToken
+        .connect(tokenOwner)
+        .transfer(sender.address, 1000n);
+      await fixedSupplyToken
+        .connect(sender)
+        .approve(await batcher.getAddress(), 1000n);
+
+      await expect(
+        batcher
+          .connect(sender)
+          .batchTransferFrom(fixedSupplyToken.getAddress(), recipients, amounts)
+      ).to.be.revertedWith('Invalid recipient address');
+    });
+
     it('Fails with empty recipients array for token transfers', async () => {
       await expect(
         batcher
